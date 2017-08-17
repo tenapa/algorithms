@@ -6,33 +6,31 @@ import java.util.NoSuchElementException;
 
 /**
  * @author Tetiana_Prynda
- * Created on 8/17/2017.
+ *         Created on 8/17/2017.
  */
 public class RandomizedQueue<Item> implements Iterable<Item> {
     private Item[] content;
+    //    private int[] links;
     private int size;
     private int nextItem;
 
     // construct an empty randomized queue
     public RandomizedQueue() {
         content = (Item[]) new Object[2];
+//        links = new int[2];
 
     }
 
     // unit testing (optional)
     public static void main(String[] args) {
         RandomizedQueue<Integer> rq = new RandomizedQueue<Integer>();
-
-        for (int i = 0; i < 64; i++) {
-            rq.enqueue(i);
-        }
-
-        for (int i = 0; i < 63; i++) {
-            rq.dequeue();
-        }
-
-        System.out.println(rq.size());
-        System.out.println(Arrays.toString(rq.content));
+        rq.enqueue(5);
+//        for (int i = 0; i < 10; i++) {
+//            rq.enqueue(i);
+//        }
+//        for (Integer integer : rq) {
+//            System.out.println(integer);
+//        }
     }
 
     // is the queue empty?
@@ -82,7 +80,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (size == 0) throw new NoSuchElementException("Cannot Sample from Empty Queue");
         Item item = null;
         do {
-            int index = StdRandom.uniform(size);
+            int index = StdRandom.uniform(nextItem);
             item = content[index];
         }
         while (item == null);
