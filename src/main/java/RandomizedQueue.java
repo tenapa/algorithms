@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.StdRandom;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -31,6 +32,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
 
         System.out.println(rq.size());
+        System.out.println(Arrays.toString(rq.content));
     }
 
     // is the queue empty?
@@ -45,7 +47,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // add the item
     public void enqueue(Item item) {
-        if(item == null) throw new IllegalArgumentException("Cannot insert Null value");
+        if (item == null) throw new IllegalArgumentException("Cannot insert Null value");
         checkSize();
         content[nextItem++] = item;
         size++;
@@ -61,7 +63,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // remove and return a random item
     public Item dequeue() {
-        if(size == 0) throw new NoSuchElementException("Cannot Dequeue from Empty Queue");
+        if (size == 0) throw new NoSuchElementException("Cannot Dequeue from Empty Queue");
+        checkSize();
         Item item = null;
         int index = 0;
         do {
@@ -76,7 +79,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // return (but do not remove) a random item
     public Item sample() {
-        if(size == 0) throw new NoSuchElementException("Cannot Sample from Empty Queue");
+        if (size == 0) throw new NoSuchElementException("Cannot Sample from Empty Queue");
         Item item = null;
         do {
             int index = StdRandom.uniform(size);
