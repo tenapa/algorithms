@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * @author Tetiana_Prynda
@@ -7,6 +8,7 @@ import java.util.Arrays;
 public class BruteCollinearPoints {
     private final LineSegment[] segments;
     private LineSegment[] segmentsTmp;
+
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
@@ -36,8 +38,11 @@ public class BruteCollinearPoints {
                         if (pq == pr && pq == ps) {
                             // points are collinear, get bottom and top point
                             Point[] collinearPoints = {p, q, r, s};
-                            Arrays.sort(collinearPoints);
-                            Arrays.sort(collinearPoints, p.slopeOrder());
+                            Arrays.sort(collinearPoints, new Comparator<Point>() {
+                                public int compare(Point o1, Point o2) {
+                                    return o1.compareTo(o2);
+                                }
+                            });
                             addSegment(count++, new LineSegment(collinearPoints[0], collinearPoints[3]));
                         }
                     }

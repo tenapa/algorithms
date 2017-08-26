@@ -30,12 +30,13 @@ public class PointTest {
 
     @Test
     public void pointTest_4(){
-        Point p = new Point(5, 4);
-        Point q = new Point(5, 8);
-        Point r = new Point(5, 9);
-        assertEquals(0, p.slopeOrder().compare(q, r));
-        assertEquals(Double.POSITIVE_INFINITY, p.slopeTo(q), PRECISION);
-        assertEquals(Double.POSITIVE_INFINITY, p.slopeTo(r), PRECISION);
+
+        Point p = new Point(3, 6);
+        Point q = new Point(2, 6);
+        Point r = new Point(3, 6);
+        assertEquals(1, p.slopeOrder().compare(q, r));
+        assertEquals(0.0, p.slopeTo(q), PRECISION);
+        assertEquals(Double.NEGATIVE_INFINITY, p.slopeTo(r), PRECISION);
     }
 
 //    @Test

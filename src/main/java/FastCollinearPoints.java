@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * @author Tetiana_Prynda
@@ -18,7 +19,11 @@ public class FastCollinearPoints {
         for (Point point : points) {
             checkNull(point, "Point can not be null");
         }
-        Arrays.sort(points);
+        Arrays.sort(points, new Comparator<Point>() {
+            public int compare(Point o1, Point o2) {
+                return o1.compareTo(o2);
+            }
+        });
         segmentsTmp = new LineSegment[2];
         int nextIndex = 0;
 //        usedSlopes = new double[2];
