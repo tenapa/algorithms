@@ -4,10 +4,9 @@ import java.util.Comparator;
 
 /**
  * @author Tetiana_Prynda
- * Created on 8/25/2017.
+ *         Created on 8/25/2017.
  */
 public class Point implements Comparable<Point> {
-    private static final double PRECISION = 0.00001;
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
@@ -28,17 +27,15 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-//        Point p1 = new Point(0, 0);
-//        Point p2 = new Point(0, 1);
-//        Point p3 = new Point(1, 0);
-//        Point p4 = new Point(1, 1);
-//        final Point[] points = {p1, p2, p3, p4};
-//        System.out.println(Arrays.toString(points));
-//        Arrays.sort(points, p1.slopeOrder());
-//        System.out.println(Arrays.toString(points));
-//        System.out.println(p1 + " " + p2);
-//        System.out.println(p1.compareTo(p2));
-//        System.out.println(p1.slopeTo(p2));
+        Point p = new Point(6, 3);
+        Point q = new Point(0, 9);
+        Point r = new Point(1, 8);
+//        Point s                            = new Point(161, 167);
+        System.out.println(p.slopeOrder().compare(q, r) + "=" + 0);
+        System.out.println(p.slopeTo(q));
+        System.out.println(p.slopeTo(r));
+//        System.out.println(p.slopeOrder().compare(r, s) +"="+ -1);
+//        System.out.println(p.slopeOrder().compare(q, s) +"="+ 1);
     }
 
     /**
@@ -120,8 +117,12 @@ public class Point implements Comparable<Point> {
             public int compare(Point o1, Point o2) {
                 final double slope1 = Point.this.slopeTo(o1);
                 final double slope2 = Point.this.slopeTo(o2);
-                if (slope2 > slope1 && slope2 - slope1 > PRECISION) return -1;
-                if (slope2 < slope1 && slope1 - slope2 > PRECISION) return 1;
+                if (slope1 == Double.NEGATIVE_INFINITY || slope2 == Double.NEGATIVE_INFINITY)
+//                        || slope1 == Double.POSITIVE_INFINITY || slope2 == Double.POSITIVE_INFINITY)
+                    return o1.compareTo(o2);
+                if (slope2 > slope1) return -1;
+                if (slope2 < slope1) return 1;
+//                return o1.compareTo(o2);
                 return 0;
             }
         };

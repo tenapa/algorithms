@@ -1,7 +1,7 @@
 package com.tenapa.coursera.algorithms.week1samples;
 
-import com.tenapa.coursera.algorithms.utils.StdIn;
-import com.tenapa.coursera.algorithms.utils.StdOut;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
 
 /**
  * @author Tetiana_Prynda

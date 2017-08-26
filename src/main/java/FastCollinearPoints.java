@@ -2,17 +2,27 @@ import java.util.Arrays;
 
 /**
  * @author Tetiana_Prynda
- * Created on 8/25/2017.
+ *         Created on 8/25/2017.
  */
 public class FastCollinearPoints {
-    private static final double PRECISION = 0.00001;
     private final LineSegment[] segments;
+    private LineSegment[] segmentsTmp;
+//
+//    double [] usedSlopes;
+//    int [][] pointToSlope;
+
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
         checkNull(points, "Points can not be null");
-        LineSegment[] seg = new LineSegment[2];
+        for (Point point : points) {
+            checkNull(point, "Point can not be null");
+        }
+        Arrays.sort(points);
+        segmentsTmp = new LineSegment[2];
         int nextIndex = 0;
+//        usedSlopes = new double[2];
+//        pointToSlope = new int[points.length][1];
         for (int i = 0; i < points.length; i++) {
             final Point p = points[i];
             checkNull(p, "Point can not ne null");
@@ -24,15 +34,16 @@ public class FastCollinearPoints {
             int count = 1;
             for (int j = 0; j < subset.length; j++) {
                 q = subset[j];
+                checkNull(q, "Point can not ne null");
                 checkSame(p, q);
                 final double currentSlope = p.slopeTo(q);
-                if (currentSlope > slope ? currentSlope - slope < PRECISION : slope - currentSlope < PRECISION) {
+                if (currentSlope == slope) {
                     count++;
                 } else {
                     if (count >= 4) {
                         Point[] inSegment = getPointsInSegment(p, subset, count, j);
                         final LineSegment lineSegment = makeSegment(inSegment);
-                        addSegment(seg, nextIndex++, lineSegment);
+                        addSegment(nextIndex++, lineSegment);
                     }
                     slope = currentSlope;
                     count = 2;
@@ -41,10 +52,10 @@ public class FastCollinearPoints {
             // treat last segment
             if (count >= 4) {
                 final LineSegment lineSegment = makeSegment(getPointsInSegment(p, subset, count, subset.length));
-                addSegment(seg, nextIndex++, lineSegment);
+                addSegment(nextIndex++, lineSegment);
             }
         }
-        this.segments = Arrays.copyOf(seg, nextIndex);
+        this.segments = Arrays.copyOf(segmentsTmp, nextIndex);
     }
 
     public static void main(String[] args) {
@@ -76,9 +87,16 @@ public class FastCollinearPoints {
         return new LineSegment(min, max);
     }
 
-    private void addSegment(LineSegment[] segments, int nextIndex, LineSegment lineSegment) {
-        segments = Arrays.copyOf(segments, segments.length * 2);
-        segments[nextIndex] = lineSegment;
+    private void addSegment(int nextIndex, LineSegment lineSegment) {
+        if (this.segmentsTmp.length == nextIndex) {
+            LineSegment[] newSegments = new LineSegment[this.segmentsTmp.length * 2];
+            for (int i = 0; i < this.segmentsTmp.length; i++) {
+                newSegments[i] = this.segmentsTmp[i];
+            }
+            this.segmentsTmp = newSegments;
+        }
+//        System.out.println("Inserting line segment "+lineSegment+" into index "+nextIndex+ " of array "+this.segmentsTmp.length);
+        this.segmentsTmp[nextIndex] = lineSegment;
     }
 
     private void checkSame(Point p, Point r) {
