@@ -1,12 +1,14 @@
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdOut;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Tetiana_Prynda
- * Created on 8/30/2017.
+ *         Created on 8/30/2017.
  */
 public class BoardTest {
 
@@ -35,11 +37,100 @@ public class BoardTest {
     }
 
     @Test
-    public void Board_constructor_puzzle04() throws Exception {
-        runTest("8puzzle/puzzle04.txt");
+    public void board_neighbors() throws Exception {
+        final Board board = new Board(new int[][]{new int[]{0, 1, 3}, new int[]{4, 2, 5}, new int[]{7, 8, 6}});
+        Collection<Board> expectedNeighbors = new ArrayList<Board>(2);
+        expectedNeighbors.add(new Board(new int[][]{new int[]{4, 1, 3}, new int[]{0, 2, 5}, new int[]{7, 8, 6}}));
+        expectedNeighbors.add(new Board(new int[][]{new int[]{1, 0, 3}, new int[]{4, 2, 5}, new int[]{7, 8, 6}}));
+        Iterable<Board> actualNeighbors = board.neighbors();
+
+        assertEquals(expectedNeighbors, actualNeighbors);
     }
 
-    private void runTest(String fileName){
+    @Test
+    public void Board_puzzle04() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle04.txt");
+        assertEquals(true, solution.isSolvable());
+        assertEquals(4, solution.moves());
+//        System.out.println(printSolution(solution.solution()));
+    }
+
+    @Test
+    public void Board_puzzle2x2_00() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle2x2-00.txt");
+        assertEquals(true, solution.isSolvable());
+        assertEquals(0, solution.moves());
+//        System.out.println(printSolution(solution.solution()));
+    }
+
+    @Test
+    public void Board_puzzle2x2_01() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle2x2-01.txt");
+        assertEquals(true, solution.isSolvable());
+        assertEquals(1, solution.moves());
+//        System.out.println(printSolution(solution.solution()));
+    }
+
+
+    @Test
+    public void Board_puzzle2x2_02() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle2x2-02.txt");
+        assertEquals(true, solution.isSolvable());
+        assertEquals(2, solution.moves());
+//        System.out.println(printSolution(solution.solution()));
+    }
+
+    @Test
+    public void Board_puzzle2x2_03() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle2x2-03.txt");
+        assertEquals(true, solution.isSolvable());
+        assertEquals(3, solution.moves());
+//        System.out.println(printSolution(solution.solution()));
+    }
+
+    @Test
+    public void Board_puzzle2x2_04() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle2x2-04.txt");
+        assertEquals(true, solution.isSolvable());
+        assertEquals(4, solution.moves());
+//        System.out.println(printSolution(solution.solution()));
+    }
+
+    @Test
+    public void Board_puzzle2x2_05() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle2x2-05.txt");
+        assertEquals(true, solution.isSolvable());
+        assertEquals(5, solution.moves());
+        System.out.println(printSolution(solution.solution()));
+    }
+
+    @Test
+    public void Board_puzzle2x2_06() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle2x2-06.txt");
+        System.out.println(printSolution(solution.solution()));
+        assertEquals(true, solution.isSolvable());
+        assertEquals(6, solution.moves());
+    }
+
+    private String printSolution(Iterable<Board> solution) {
+        StringBuilder builder = new StringBuilder();
+        int i = 1;
+        for (Board board : solution) {
+            builder.append(i++).append("\n");
+            builder.append(board.toString()).append("\n");
+        }
+        return builder.toString();
+    }
+
+
+    //    @Test
+    public void Board_puzzle3x3_unsolvable() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle3x3-unsolvable.txt");
+        assertEquals(false, solution.isSolvable());
+        assertEquals(-1, solution.moves());
+    }
+
+    private Solver runTest(String fileName) {
         In in = new In(fileName);
         int n = in.readInt();
         int[][] blocks = new int[n][n];
@@ -50,17 +141,7 @@ public class BoardTest {
 
         System.out.println(initial);
         // solve the puzzle
-        Solver solver = new Solver(initial);
-
-        // print solution to standard output
-        if (!solver.isSolvable())
-            StdOut.println("No solution possible");
-        else {
-            StdOut.println("Minimum number of moves = " + solver.moves());
-            for (Board board : solver.solution())
-                StdOut.println(board);
-        }
-        
+        return new Solver(initial);
     }
 
 }

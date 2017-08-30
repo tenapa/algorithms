@@ -1,11 +1,12 @@
 import edu.princeton.cs.algs4.StdRandom;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 
 /**
  * @author Tetiana_Prynda
- * Created on 8/30/2017.
+ *         Created on 8/30/2017.
  */
 public class Board {
 
@@ -14,11 +15,16 @@ public class Board {
     private final int length;
     private final int hamming;
     private final int manhattan;
+    private int moves;
     private boolean solved;
+    private int zeroI;
+    private int zeroJ;
+    private Board previous;
 
     // construct a board from an n-by-n array of blocks
     // (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks) {
+        this.moves = 0;
         this.length = blocks.length;
         this.blocks = new int[length][length];
         this.goal = new int[length][length];
@@ -30,10 +36,28 @@ public class Board {
                 this.blocks[i][j] = actualItem;
                 this.goal[i][j] = expectedItem;
                 if (actualItem != expectedItem) solved = false;
+                if (actualItem == 0) {
+                    zeroI = i;
+                    zeroJ = j;
+                }
             }
         }
         this.hamming = countHamming();
         this.manhattan = countManhattan();
+    }
+
+    int getMoves() {
+        return moves;
+    }
+
+    Board getPrevious() {
+        return previous;
+    }
+
+    private Board(int[][] blocks, int moves, Board previous) {
+        this(blocks);
+        this.moves = moves;
+        this.previous = previous;
     }
 
     // board dimension n
@@ -43,7 +67,7 @@ public class Board {
 
     // number of blocks out of place
     public int hamming() {
-        return hamming;
+        return hamming + moves;
     }
 
     private int countHamming() {
@@ -58,7 +82,7 @@ public class Board {
 
     // sum of Manhattan distances between blocks and goal
     public int manhattan() {
-        return manhattan;
+        return manhattan + moves;
     }
 
     private int countManhattan() {
@@ -85,44 +109,37 @@ public class Board {
     public Board twin() {
         final int i = StdRandom.uniform(length);
         final int j = StdRandom.uniform(length);
-        final int direction = StdRandom.uniform(4);
+        final int newI = StdRandom.uniform(length);
+        final int newJ = StdRandom.uniform(length);
 
-        return getTwin(i, j, direction);
+        return moveItem(i, j, newI, newJ);
     }
 
-    private Board getTwin(int i, int j, int direction) {
-        //direction considered as 0 - up, 1 - right, 2 - down, 3 - left. if no option - switch up-down, left-right
-        int secondI;
-        int secondJ;
-        switch (direction) {
-            case 0:
-                secondI = i == 0 ? i + 1 : i - 1;
-                secondJ = j;
-                break;
-            case 2:
-                secondI = i == length - 1 ? i - 1 : i + 1;
-                secondJ = j;
-                break;
-            case 1:
-                secondI = i;
-                secondJ = j == length - 1 ? j - 1 : j + 1;
-                break;
-            case 3:
-                secondI = i;
-                secondJ = j == 0 ? j + 1 : j - 1;
-                break;
-            default:
-                secondI = i;
-                secondJ = j;
-        }
+    private Board moveItem(int i, int j, int aimI, int aimJ) {
         final int original = this.blocks[i][j];
-        final int neighbor = this.blocks[secondI][secondJ];
+        final int neighbor = this.blocks[aimI][aimJ];
         this.blocks[i][j] = neighbor;
-        this.blocks[secondI][secondJ] = original;
-        final Board board = new Board(this.blocks);
+        this.blocks[aimI][aimJ] = original;
+        final Board board = new Board(this.blocks, moves + 1, this);
         this.blocks[i][j] = original;
-        this.blocks[secondI][secondJ] = neighbor;
+        this.blocks[aimI][aimJ] = neighbor;
         return board;
+    }
+
+    private boolean canBeMovedUp(int i, int j) {
+        return i > 0;
+    }
+
+    private boolean canBeMovedDown(int i, int j) {
+        return i < length - 1;
+    }
+
+    private boolean canBeMovedLeft(int i, int j) {
+        return j > 0;
+    }
+
+    private boolean canBeMovedRight(int i, int j) {
+        return j < length - 1;
     }
 
     // does this board equal y?
@@ -130,12 +147,25 @@ public class Board {
         if (this == y) return true;
         if (y == null || getClass() != y.getClass()) return false;
         Board board = (Board) y;
-        return Arrays.equals(blocks, board.blocks);
+        return Arrays.deepEquals(blocks, board.blocks);
     }
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        return Collections.emptyList();
+        Collection<Board> neighbors = new ArrayList<Board>();
+        if (canBeMovedDown(zeroI, zeroJ)) {
+            neighbors.add(moveItem(zeroI, zeroJ, zeroI + 1, zeroJ));
+        }
+        if (canBeMovedUp(zeroI, zeroJ)) {
+            neighbors.add(moveItem(zeroI, zeroJ, zeroI - 1, zeroJ));
+        }
+        if (canBeMovedLeft(zeroI, zeroJ)) {
+            neighbors.add(moveItem(zeroI, zeroJ, zeroI, zeroJ - 1));
+        }
+        if (canBeMovedRight(zeroI, zeroJ)) {
+            neighbors.add(moveItem(zeroI, zeroJ, zeroI, zeroJ + 1));
+        }
+        return neighbors;
     }
 
     // string representation of this board (in the output format specified below)
