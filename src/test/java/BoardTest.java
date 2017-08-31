@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -54,6 +55,39 @@ public class BoardTest {
         assertEquals(4, solution.moves());
         assertEquals(5, getSolutionSize(solution));
 //        System.out.println(printSolution(solution.solution()));
+    }
+
+    @Test
+    public void Board_puzzle00() throws Exception {
+        Solver solver = runTest("8puzzle/puzzle00.txt");
+        assertEquals(true, solver.isSolvable());
+        assertEquals(0, solver.moves());
+        assertEquals(0, getSolutionSize(solver));
+        // print solution to standard output
+        if (!solver.isSolvable())
+            StdOut.println("No solution possible");
+        else {
+            StdOut.println("Minimum number of moves = " + solver.moves());
+            for (Board board : solver.solution())
+                StdOut.println(board);
+        }
+    }
+
+
+    @Test
+    public void Board_puzzle03() throws Exception {
+        Solver solver = runTest("8puzzle/puzzle03.txt");
+        assertEquals(true, solver.isSolvable());
+        assertEquals(3, solver.moves());
+        assertEquals(4, getSolutionSize(solver));
+        // print solution to standard output
+        if (!solver.isSolvable())
+            StdOut.println("No solution possible");
+        else {
+            StdOut.println("Minimum number of moves = " + solver.moves());
+            for (Board board : solver.solution())
+                StdOut.println(board);
+        }
     }
 
     private int getSolutionSize(Solver solution) {
@@ -144,7 +178,7 @@ public class BoardTest {
 
     }
 
-//    @Test
+    //    @Test
     public void Board_puzzle4x4_80() throws Exception {
         Solver solution = runTest("8puzzle/puzzle4x4-80.txt");
 //        System.out.println(printSolution(solution.solution()));
@@ -176,7 +210,7 @@ public class BoardTest {
         assertEquals(-1, solution.moves());
     }
 
-//    @Test
+    //    @Test
     public void Board_puzzle4x4_unsolvable() throws Exception {
         Solver solution = runTest("8puzzle/puzzle4x4-unsolvable.txt");
         assertEquals(false, solution.isSolvable());
