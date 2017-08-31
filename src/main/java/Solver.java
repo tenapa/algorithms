@@ -27,70 +27,65 @@ public class Solver {
             moves = -1;
             return;
         }
-        MinPQ<Board> queue = new MinPQ<Board>(new Comparator<Board>() {
-            public int compare(Board b1, Board b2) {
-                return Integer.compare(b1.manhattan(), b2.manhattan());
+        MinPQ<BoardNode> queue = new MinPQ<BoardNode>(new Comparator<BoardNode>() {
+            public int compare(BoardNode b1, BoardNode b2) {
+                return Integer.compare(b1.getBoard().manhattan() + b1.getMoves(), b2.getBoard().manhattan() + b2.getMoves());
             }
         });
-        queue.insert(initial);
-        Board previous = queue.min();
-        Board searchNode = queue.delMin();
-        for (Board board : searchNode.neighbors()) {
+        queue.insert(new BoardNode(initial, 0, null));
+        BoardNode previous = queue.min();
+        BoardNode searchNode = queue.delMin();
+        for (BoardNode board : searchNode.neighbors()) {
             queue.insert(board);
         }
-        Board minNode = queue.delMin();
-//        solution = new LinkedList<Board>();
-//        solution.add(minNode);
+        BoardNode minNode = queue.delMin();
 
-        MinPQ<Board> twinQueue = new MinPQ<Board>(new Comparator<Board>() {
-            public int compare(Board b1, Board b2) {
-                return Integer.compare(b1.manhattan(), b2.manhattan());
+        MinPQ<BoardNode> twinQueue = new MinPQ<BoardNode>(new Comparator<BoardNode>() {
+            public int compare(BoardNode b1, BoardNode b2) {
+                return Integer.compare(b1.getBoard().manhattan() + b1.getMoves(), b2.getBoard().manhattan() + b2.getMoves());
             }
         });
-        twinQueue.insert(twin);
-        Board twinPrevious = twinQueue.min();
-        Board twinSearchNode = twinQueue.delMin();
-        for (Board board : twinSearchNode.neighbors()) {
+        twinQueue.insert(new BoardNode(twin, 0, null));
+        BoardNode twinPrevious = twinQueue.min();
+        BoardNode twinSearchNode = twinQueue.delMin();
+        for (BoardNode board : twinSearchNode.neighbors()) {
             twinQueue.insert(board);
         }
-        Board twinMinNode = twinQueue.delMin();
+        BoardNode twinMinNode = twinQueue.delMin();
 
-//        int activeMove = 2;
-        while (!minNode.isGoal() || queue.isEmpty()) {
-//            System.out.println("Move "+activeMove++);
-            if (twinMinNode.isGoal()) {
+        while (!minNode.getBoard().isGoal() || queue.isEmpty()) {
+            if (twinMinNode.getBoard().isGoal()) {
                 solvable = false;
                 moves = -1;
                 break;
             }
             searchNode = minNode;
-            for (Board board : searchNode.neighbors()) {
+            for (BoardNode board : searchNode.neighbors()) {
                 if (previous.equals(board)) continue;
                 queue.insert(board);
             }
             minNode = queue.delMin();
             previous = minNode.getPrevious();
-//            solution.add(minNode);
 
             twinSearchNode = twinMinNode;
-            for (Board board : twinSearchNode.neighbors()) {
+            for (BoardNode board : twinSearchNode.neighbors()) {
                 if (twinPrevious.equals(board)) continue;
                 twinQueue.insert(board);
             }
             twinMinNode = twinQueue.delMin();
             twinPrevious = twinMinNode.getPrevious();
         }
-        if (minNode.isGoal()) {
+        if (minNode.getBoard().isGoal()) {
             solvable = true;
             solution = buildSolution(minNode);
         }
     }
 
-    private Iterable<Board> buildSolution(Board minNode) {
+    private Iterable<Board> buildSolution(BoardNode minNode) {
         Stack<Board> solution = new Stack<Board>();
-        Board current = minNode;
+        BoardNode current = minNode;
         while (current.getPrevious() != null) {
-            solution.push(current);
+            solution.push(current.getBoard());
             moves++;
             current = current.getPrevious();
 
@@ -115,5 +110,50 @@ public class Solver {
 
     // solve a slider puzzle (given below)
     public static void main(String[] args) {
+    }
+
+    private class BoardNode {
+        Board board;
+        int moves;
+        BoardNode previous;
+
+        BoardNode(Board board, int moves, BoardNode previous) {
+            this.board = board;
+            this.moves = moves;
+            this.previous = previous;
+        }
+
+        Board getBoard() {
+            return board;
+        }
+
+        int getMoves() {
+            return moves;
+        }
+
+        BoardNode getPrevious() {
+            return previous;
+        }
+
+        Iterable<BoardNode> neighbors() {
+            Iterable<Board> neighbors = board.neighbors();
+            Collection<BoardNode> nodeNeighbors = new ArrayList<BoardNode>();
+            for (Board neighbor : neighbors) {
+                nodeNeighbors.add(new BoardNode(neighbor, moves + 1, this));
+
+            }
+            return nodeNeighbors;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            BoardNode boardNode = (BoardNode) o;
+
+            return board != null ? board.equals(boardNode.board) : boardNode.board != null;
+
+        }
     }
 }

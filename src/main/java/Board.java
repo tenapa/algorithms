@@ -15,16 +15,13 @@ public class Board {
     private final int length;
     private final int hamming;
     private final int manhattan;
-    private int moves;
     private boolean solved;
     private int zeroI;
     private int zeroJ;
-    private Board previous;
 
     // construct a board from an n-by-n array of blocks
     // (where blocks[i][j] = block in row i, column j)
     public Board(int[][] blocks) {
-        this.moves = 0;
         this.length = blocks.length;
         this.blocks = new int[length][length];
         this.goal = new int[length][length];
@@ -46,16 +43,6 @@ public class Board {
         this.manhattan = countManhattan();
     }
 
-    Board getPrevious() {
-        return previous;
-    }
-
-    private Board(int[][] blocks, int moves, Board previous) {
-        this(blocks);
-        this.moves = moves;
-        this.previous = previous;
-    }
-
     // board dimension n
     public int dimension() {
         return length;
@@ -63,7 +50,7 @@ public class Board {
 
     // number of blocks out of place
     public int hamming() {
-        return hamming + moves;
+        return hamming;
     }
 
     private int countHamming() {
@@ -78,7 +65,7 @@ public class Board {
 
     // sum of Manhattan distances between blocks and goal
     public int manhattan() {
-        return manhattan + moves;
+        return manhattan;
     }
 
     private int countManhattan() {
@@ -129,7 +116,7 @@ public class Board {
         final int neighbor = this.blocks[aimI][aimJ];
         this.blocks[i][j] = neighbor;
         this.blocks[aimI][aimJ] = original;
-        final Board board = new Board(this.blocks, moves + 1, this);
+        final Board board = new Board(this.blocks);
         this.blocks[i][j] = original;
         this.blocks[aimI][aimJ] = neighbor;
         return board;
@@ -179,14 +166,15 @@ public class Board {
 
     // string representation of this board (in the output format specified below)
     public String toString() {
-        StringBuilder builder = new StringBuilder(this.blocks.length * this.blocks.length * 2);
-        for (int[] block : blocks) {
-            for (int j = 0; j < blocks.length; j++) {
-                builder.append(block[j]).append(" ");
+        StringBuilder s = new StringBuilder();
+        s.append(length).append("\n");
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < length; j++) {
+                s.append(String.format("%2d ", blocks[i][j]));
             }
-            builder.append("\n");
+            s.append("\n");
         }
-        return builder.toString();
+        return s.toString();
     }
 
     // unit tests (not graded)
