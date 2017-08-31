@@ -11,7 +11,6 @@ import java.util.Collection;
 public class Board {
 
     private final int[][] blocks;
-    private final int[][] goal;
     private final int length;
     private final int hamming;
     private final int manhattan;
@@ -24,14 +23,12 @@ public class Board {
     public Board(int[][] blocks) {
         this.length = blocks.length;
         this.blocks = new int[length][length];
-        this.goal = new int[length][length];
         this.solved = true;
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < length; j++) {
                 final int actualItem = blocks[i][j];
-                final int expectedItem = (i * length + j + 1) % (length * length);
+                final int expectedItem = getExpected(i, j);
                 this.blocks[i][j] = actualItem;
-                this.goal[i][j] = expectedItem;
                 if (actualItem != expectedItem) solved = false;
                 if (actualItem == 0) {
                     zeroI = i;
@@ -41,6 +38,10 @@ public class Board {
         }
         this.hamming = countHamming();
         this.manhattan = countManhattan();
+    }
+
+    private int getExpected(int i, int j) {
+        return (i * length + j + 1) % (length * length);
     }
 
     // board dimension n
@@ -57,7 +58,8 @@ public class Board {
         int val = 0;
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < length; j++) {
-                if (blocks[i][j] != goal[i][j] && goal[i][j] != 0) val++;
+                int expectedItem = getExpected(i, j);
+                if (blocks[i][j] != expectedItem && expectedItem != 0) val++;
             }
         }
         return val;

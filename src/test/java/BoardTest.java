@@ -52,7 +52,17 @@ public class BoardTest {
         Solver solution = runTest("8puzzle/puzzle04.txt");
         assertEquals(true, solution.isSolvable());
         assertEquals(4, solution.moves());
+        assertEquals(5, getSolutionSize(solution));
 //        System.out.println(printSolution(solution.solution()));
+    }
+
+    private int getSolutionSize(Solver solution) {
+        Iterable<Board> pathToSolution = solution.solution();
+        int count = 0;
+        for (Board board : pathToSolution) {
+            count++;
+        }
+        return count;
     }
 
     @Test
@@ -60,6 +70,8 @@ public class BoardTest {
         Solver solution = runTest("8puzzle/puzzle2x2-00.txt");
         assertEquals(true, solution.isSolvable());
         assertEquals(0, solution.moves());
+        assertEquals(0, getSolutionSize(solution));
+
 //        System.out.println(printSolution(solution.solution()));
     }
 
@@ -68,6 +80,8 @@ public class BoardTest {
         Solver solution = runTest("8puzzle/puzzle2x2-01.txt");
         assertEquals(true, solution.isSolvable());
         assertEquals(1, solution.moves());
+        assertEquals(2, getSolutionSize(solution));
+
 //        System.out.println(printSolution(solution.solution()));
     }
 
@@ -77,6 +91,8 @@ public class BoardTest {
         Solver solution = runTest("8puzzle/puzzle2x2-02.txt");
         assertEquals(true, solution.isSolvable());
         assertEquals(2, solution.moves());
+        assertEquals(3, getSolutionSize(solution));
+
 //        System.out.println(printSolution(solution.solution()));
     }
 
@@ -85,6 +101,8 @@ public class BoardTest {
         Solver solution = runTest("8puzzle/puzzle2x2-03.txt");
         assertEquals(true, solution.isSolvable());
         assertEquals(3, solution.moves());
+        assertEquals(4, getSolutionSize(solution));
+
 //        System.out.println(printSolution(solution.solution()));
     }
 
@@ -101,6 +119,8 @@ public class BoardTest {
         Solver solution = runTest("8puzzle/puzzle2x2-05.txt");
         assertEquals(true, solution.isSolvable());
         assertEquals(5, solution.moves());
+        assertEquals(6, getSolutionSize(solution));
+
 //        System.out.println(printSolution(solution.solution()));
     }
 
@@ -110,6 +130,8 @@ public class BoardTest {
 //        System.out.println(printSolution(solution.solution()));
         assertEquals(true, solution.isSolvable());
         assertEquals(6, solution.moves());
+        assertEquals(7, getSolutionSize(solution));
+
     }
 
     @Test
@@ -118,6 +140,8 @@ public class BoardTest {
 //        System.out.println(printSolution(solution.solution()));
         assertEquals(true, solution.isSolvable());
         assertEquals(31, solution.moves());
+        assertEquals(32, getSolutionSize(solution));
+
     }
 
 //    @Test

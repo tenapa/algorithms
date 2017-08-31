@@ -27,11 +27,7 @@ public class Solver {
             moves = -1;
             return;
         }
-        MinPQ<BoardNode> queue = new MinPQ<BoardNode>(new Comparator<BoardNode>() {
-            public int compare(BoardNode b1, BoardNode b2) {
-                return Integer.compare(b1.getBoard().manhattan() + b1.getMoves(), b2.getBoard().manhattan() + b2.getMoves());
-            }
-        });
+        MinPQ<BoardNode> queue = new MinPQ<BoardNode>(new BoardNodeComparator());
         queue.insert(new BoardNode(initial, 0, null));
         BoardNode previous = queue.min();
         BoardNode searchNode = queue.delMin();
@@ -40,11 +36,7 @@ public class Solver {
         }
         BoardNode minNode = queue.delMin();
 
-        MinPQ<BoardNode> twinQueue = new MinPQ<BoardNode>(new Comparator<BoardNode>() {
-            public int compare(BoardNode b1, BoardNode b2) {
-                return Integer.compare(b1.getBoard().manhattan() + b1.getMoves(), b2.getBoard().manhattan() + b2.getMoves());
-            }
-        });
+        MinPQ<BoardNode> twinQueue = new MinPQ<BoardNode>(new BoardNodeComparator());
         twinQueue.insert(new BoardNode(twin, 0, null));
         BoardNode twinPrevious = twinQueue.min();
         BoardNode twinSearchNode = twinQueue.delMin();
@@ -90,6 +82,7 @@ public class Solver {
             current = current.getPrevious();
 
         }
+        solution.push(current.getBoard());
         return solution;
     }
 
@@ -115,12 +108,14 @@ public class Solver {
     private class BoardNode {
         Board board;
         int moves;
+        int manhattan;
         BoardNode previous;
 
         BoardNode(Board board, int moves, BoardNode previous) {
             this.board = board;
             this.moves = moves;
             this.previous = previous;
+            this.manhattan = board.manhattan();
         }
 
         Board getBoard() {
@@ -129,6 +124,10 @@ public class Solver {
 
         int getMoves() {
             return moves;
+        }
+
+        int getPriority() {
+            return manhattan + moves;
         }
 
         BoardNode getPrevious() {
@@ -146,14 +145,20 @@ public class Solver {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
 
-            BoardNode boardNode = (BoardNode) o;
+            BoardNode boardNode = (BoardNode) obj;
 
             return board != null ? board.equals(boardNode.board) : boardNode.board != null;
 
+        }
+    }
+
+    private class BoardNodeComparator implements Comparator<BoardNode> {
+        public int compare(BoardNode b1, BoardNode b2) {
+            return Integer.compare(b1.getPriority(), b2.getPriority());
         }
     }
 }
