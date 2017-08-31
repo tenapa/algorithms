@@ -46,10 +46,6 @@ public class Board {
         this.manhattan = countManhattan();
     }
 
-    int getMoves() {
-        return moves;
-    }
-
     Board getPrevious() {
         return previous;
     }
@@ -107,11 +103,24 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        final int i = StdRandom.uniform(length);
-        final int j = StdRandom.uniform(length);
-        final int newI = StdRandom.uniform(length);
-        final int newJ = StdRandom.uniform(length);
+        int i = StdRandom.uniform(length);
+        int j = StdRandom.uniform(length);
+        int newI = StdRandom.uniform(length);
+        int newJ = StdRandom.uniform(length);
 
+        int originalValue = blocks[i][j];
+        int swapValue = blocks[newI][newJ];
+        while (originalValue == 0 || swapValue == 0 || originalValue == swapValue) {
+            if (originalValue == 0) {
+                i = StdRandom.uniform(length);
+                j = StdRandom.uniform(length);
+            } else {
+                newI = StdRandom.uniform(length);
+                newJ = StdRandom.uniform(length);
+            }
+            originalValue = blocks[i][j];
+            swapValue = blocks[newI][newJ];
+        }
         return moveItem(i, j, newI, newJ);
     }
 

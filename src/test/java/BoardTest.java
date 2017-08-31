@@ -101,15 +101,31 @@ public class BoardTest {
         Solver solution = runTest("8puzzle/puzzle2x2-05.txt");
         assertEquals(true, solution.isSolvable());
         assertEquals(5, solution.moves());
-        System.out.println(printSolution(solution.solution()));
+//        System.out.println(printSolution(solution.solution()));
     }
 
     @Test
     public void Board_puzzle2x2_06() throws Exception {
         Solver solution = runTest("8puzzle/puzzle2x2-06.txt");
-        System.out.println(printSolution(solution.solution()));
+//        System.out.println(printSolution(solution.solution()));
         assertEquals(true, solution.isSolvable());
         assertEquals(6, solution.moves());
+    }
+
+    @Test
+    public void Board_puzzle3x3_31() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle3x3-31.txt");
+//        System.out.println(printSolution(solution.solution()));
+        assertEquals(true, solution.isSolvable());
+        assertEquals(31, solution.moves());
+    }
+
+//    @Test
+    public void Board_puzzle4x4_80() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle4x4-80.txt");
+//        System.out.println(printSolution(solution.solution()));
+        assertEquals(true, solution.isSolvable());
+        assertEquals(80, solution.moves());
     }
 
     private String printSolution(Iterable<Board> solution) {
@@ -122,10 +138,23 @@ public class BoardTest {
         return builder.toString();
     }
 
+    @Test
+    public void Board_puzzle2x2_unsolvable1() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle2x2-unsolvable1.txt");
+        assertEquals(false, solution.isSolvable());
+        assertEquals(-1, solution.moves());
+    }
 
-    //    @Test
+    @Test
     public void Board_puzzle3x3_unsolvable() throws Exception {
         Solver solution = runTest("8puzzle/puzzle3x3-unsolvable.txt");
+        assertEquals(false, solution.isSolvable());
+        assertEquals(-1, solution.moves());
+    }
+
+//    @Test
+    public void Board_puzzle4x4_unsolvable() throws Exception {
+        Solver solution = runTest("8puzzle/puzzle4x4-unsolvable.txt");
         assertEquals(false, solution.isSolvable());
         assertEquals(-1, solution.moves());
     }
