@@ -1,7 +1,12 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.TreeSet;
+
 
 /**
  * @author Tetiana_Prynda
@@ -9,37 +14,37 @@ import java.util.*;
  */
 public class PointSET {
 
-    private Set<Point2D> pointsOnSquare;
+    private final Set<Point2D> points;
 
     // construct an empty set of points
     public PointSET() {
-        pointsOnSquare = new TreeSet<Point2D>();
+        points = new TreeSet<Point2D>();
     }
 
     // is the set empty?
     public boolean isEmpty() {
-        return pointsOnSquare.isEmpty();
+        return points.isEmpty();
     }
 
     // number of points in the set
     public int size() {
-        return pointsOnSquare.size();
+        return points.size();
     }
 
     // add the point to the set (if it is not already in the set)
     public void insert(Point2D p) {
-        pointsOnSquare.add(p);
+        points.add(p);
     }
 
     // does the set contain point p?
     public boolean contains(Point2D p) {
         if (p == null) throw new IllegalArgumentException("Can not check null Point");
-        return pointsOnSquare.contains(p);
+        return points.contains(p);
     }
 
     // draw all points to standard draw
     public void draw() {
-        for (Point2D point2D : pointsOnSquare) {
+        for (Point2D point2D : points) {
             point2D.draw();
         }
     }
@@ -47,9 +52,9 @@ public class PointSET {
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect) {
         if (rect == null) throw new IllegalArgumentException("Can not check null Rect");
-        if (pointsOnSquare.isEmpty()) return null;
+        if (points.isEmpty()) return null;
         Collection<Point2D> insidePoints = new LinkedList<Point2D>();
-        for (Point2D point2D : pointsOnSquare) {
+        for (Point2D point2D : points) {
             if (rect.contains(point2D)) {
                 insidePoints.add(point2D);
             }
@@ -60,7 +65,7 @@ public class PointSET {
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
         if (p == null) throw new IllegalArgumentException("Can not check null Point");
-        final Iterator<Point2D> pointsIterator = pointsOnSquare.iterator();
+        final Iterator<Point2D> pointsIterator = points.iterator();
         if (pointsIterator.hasNext()) {
             Point2D nearest = pointsIterator.next();
             double minDistance = p.distanceTo(nearest);
@@ -79,6 +84,6 @@ public class PointSET {
 
     // unit testing of the methods (optional)
     public static void main(String[] args) {
-
+//
     }
 }
