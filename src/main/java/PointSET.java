@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -10,7 +11,7 @@ import java.util.TreeSet;
 
 /**
  * @author Tetiana_Prynda
- * Created on 9/6/2017.
+ *         Created on 9/6/2017.
  */
 public class PointSET {
 
@@ -52,7 +53,7 @@ public class PointSET {
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect) {
         if (rect == null) throw new IllegalArgumentException("Can not check null Rect");
-        if (points.isEmpty()) return null;
+        if (points.isEmpty()) return Collections.emptyList();
         Collection<Point2D> insidePoints = new LinkedList<Point2D>();
         for (Point2D point2D : points) {
             if (rect.contains(point2D)) {
@@ -68,10 +69,10 @@ public class PointSET {
         final Iterator<Point2D> pointsIterator = points.iterator();
         if (pointsIterator.hasNext()) {
             Point2D nearest = pointsIterator.next();
-            double minDistance = p.distanceTo(nearest);
+            double minDistance = getDistance(p, nearest);
             while (pointsIterator.hasNext()) {
                 final Point2D currentPoint = pointsIterator.next();
-                final double currentDistance = p.distanceTo(currentPoint);
+                final double currentDistance = getDistance(p, currentPoint);
                 if (currentDistance < minDistance) {
                     minDistance = currentDistance;
                     nearest = currentPoint;
@@ -82,8 +83,12 @@ public class PointSET {
         return null;
     }
 
+    private double getDistance(Point2D p, Point2D currentPoint) {
+        return p.distanceTo(currentPoint);
+    }
+
     // unit testing of the methods (optional)
     public static void main(String[] args) {
-//
+        // no tests here
     }
 }

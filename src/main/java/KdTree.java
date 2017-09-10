@@ -39,7 +39,7 @@ public class KdTree {
         } else {
             Node parent = findParent(p, root);
             if (parent.getPoint().equals(p)) {
-                //point already exists in the set
+                // point already exists in the set
                 return;
             } else if (isSmaller(p, parent)) {
                 Node newNode = new Node(p, parent.getType() == NodeType.X ? NodeType.Y : NodeType.X, parent, null, null);
@@ -55,6 +55,7 @@ public class KdTree {
 
     private Node findParent(Point2D p, Node node) {
         Node parent = node;
+        if (p.equals(node.getPoint())) return node;
         if (isSmaller(p, node) && node.getLeftChild() != null) parent = findParent(p, node.getLeftChild());
         else if (isGreater(p, node) && node.getRightChild() != null) parent = findParent(p, node.getRightChild());
         return parent;
@@ -73,6 +74,7 @@ public class KdTree {
     // does the set contain point p?
     public boolean contains(Point2D p) {
         if (p == null) throw new IllegalArgumentException("Can not check null Point");
+        if (root == null) return false;
         Node parent = findParent(p, root);
         return parent.getPoint().equals(p);
     }
@@ -86,8 +88,8 @@ public class KdTree {
         if (node == null) return;
         StdDraw.setPenColor(Color.BLACK);
         node.getPoint().draw();
-        Point2D lineStartPoint = getIntersection(node, lowerLimit, .0);
-        Point2D lineEndPoint = getIntersection(node, upperLimit, 1);
+        Point2D lineStartPoint = getIntersection(node, lowerLimit, 0.0);
+        Point2D lineEndPoint = getIntersection(node, upperLimit, 1.0);
         if (node.getType() == NodeType.X) {
             StdDraw.setPenColor(Color.RED);
         } else {
@@ -156,37 +158,37 @@ public class KdTree {
 
     private Point2D getBest(Node currentNode, Point2D best, Point2D p) {
         if (currentNode == null) return best;
-        double currentDistance = currentNode.getPoint().distanceTo(p);
-        if (currentDistance < best.distanceTo(p)) {
+        double currentDistance = getDistance(currentNode.getPoint(), p);
+        if (currentDistance < getDistance(best, p)) {
             best = currentNode.getPoint();
         }
         if (isSmaller(p, currentNode)) {
-            if (canBeBetter(currentNode, best.distanceTo(p), p)) {
-                best = getBest(currentNode.getLeftChild(), best, p);
-            }
-            if (canBeBetter(currentNode, best.distanceTo(p), p)) {
+            best = getBest(currentNode.getLeftChild(), best, p);
+            if (canBeBetter(currentNode, getDistance(best, p), p)) {
                 best = getBest(currentNode.getRightChild(), best, p);
             }
         } else {
-            if (canBeBetter(currentNode, best.distanceTo(p), p)) {
-                best = getBest(currentNode.getRightChild(), best, p);
-            }
-            if (canBeBetter(currentNode, best.distanceTo(p), p)) {
+            best = getBest(currentNode.getRightChild(), best, p);
+            if (canBeBetter(currentNode, getDistance(best, p), p)) {
                 best = getBest(currentNode.getLeftChild(), best, p);
             }
         }
         return best;
     }
 
+    private double getDistance(Point2D original, Point2D target) {
+        return original.distanceTo(target);
+    }
+
     private boolean canBeBetter(Node currentNode, double bestDistance, Point2D p) {
         Point2D bestPossible = currentNode.getType() == NodeType.X ? new Point2D(currentNode.getPoint().x(), p.y())
                 : new Point2D(p.x(), currentNode.getPoint().y());
-        return bestPossible.distanceTo(p) < bestDistance;
+        return getDistance(bestPossible, p) < bestDistance;
     }
 
     // unit testing of the methods (optional)
     public static void main(String[] args) {
-//
+        // no tests here
     }
 
     private enum NodeType {
