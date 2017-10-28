@@ -8,9 +8,9 @@ import java.util.*;
  * Created on 10/27/2017.
  */
 public class WordNet {
-    private final Digraph graph;
+    private final SAP sap;
     private final Map<Integer, SynSet> dictionary;
-    private final Map<String, Integer> nounToId;
+    private final Map<String, Collection<Integer>> nounToId;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
@@ -25,20 +25,42 @@ public class WordNet {
             final int id = Integer.parseInt(data[0]);
             final List<String> nouns = Arrays.asList(data[1].split(" "));
             for (String noun : nouns) {
-                nounToId.put(noun, id);
+                Collection<Integer> idsForNoun = nounToId.get(noun);
+                if (idsForNoun == null) {
+                    idsForNoun = new LinkedList<>();
+                    nounToId.put(noun, idsForNoun);
+                }
+                idsForNoun.add(id);
             }
-            dictionary.put(id, new SynSet(id, nouns, data[2]));
+            dictionary.put(id, new SynSet(id, data[1], data[2]));
         }
-        graph = new Digraph(dictionary.size());
+        Digraph graph = new Digraph(dictionary.size());
+
+        Collection<Integer> roots = new ArrayList<>(dictionary.keySet());
+        Set<Integer> nodesWithChildren = new HashSet<>(dictionary.keySet().size());
 
         final In hypernymsInput = new In(hypernyms);
         while (hypernymsInput.hasNextLine()) {
-            final String[] hyperhyms = hypernymsInput.readLine().split(",");
-            final int original = Integer.parseInt(hyperhyms[0]);
+            final String line = hypernymsInput.readLine();
+            final String[] hyperhyms = line.split(",");
+            final int child = Integer.parseInt(hyperhyms[0]);
             for (int i = 1; i < hyperhyms.length; i++) {
-                graph.addEdge(Integer.parseInt(hyperhyms[i]), original);
+                final int parent = Integer.parseInt(hyperhyms[i]);
+
+                roots.remove(child);
+                graph.addEdge(child, parent);
+                nodesWithChildren.add(parent);
             }
         }
+
+        if (roots.isEmpty() || roots.size() > 1)
+            throw new IllegalArgumentException("Not a rooted WordNet");
+
+        int rootId = roots.iterator().next();
+        if (!nodesWithChildren.contains(rootId))
+            throw new IllegalArgumentException("Root does not have any children");
+
+        sap = new SAP(graph);
     }
 
     // returns all WordNet nouns
@@ -56,7 +78,7 @@ public class WordNet {
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
         if (nounA == null || nounB == null) throw new IllegalArgumentException("Input can not be null");
-        return 0;
+        return sap.length(nounToId.get(nounA), nounToId.get(nounB));
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
@@ -64,22 +86,23 @@ public class WordNet {
     public String sap(String nounA, String nounB) {
         if (nounA == null || nounB == null) throw new IllegalArgumentException("Input can not be null");
 
-        return "";
+        final int ancestor = sap.ancestor(nounToId.get(nounA), nounToId.get(nounB));
+        return dictionary.get(ancestor).getNouns();
     }
 
     // do unit testing of this class
     public static void main(String[] args) {
-
+//        no tests here
     }
 
     private class SynSet {
         private final int id;
-        private final Set<String> nouns;
+        private final String nouns;
         private final String definition;
 
-        public SynSet(int id, Collection<String> nouns, String definition) {
+        public SynSet(int id, String nouns, String definition) {
             this.id = id;
-            this.nouns = new HashSet<>(nouns);
+            this.nouns = nouns;
             this.definition = definition;
         }
 
@@ -87,7 +110,7 @@ public class WordNet {
             return id;
         }
 
-        public Set<String> getNouns() {
+        public String getNouns() {
             return nouns;
         }
 

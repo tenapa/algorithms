@@ -25,12 +25,12 @@ public class SAP {
         BreadthFirstDirectedPaths ancestorsW = new BreadthFirstDirectedPaths(graph, w);
 
         final int ancestor = getFirstCommonAncestor(v, ancestorsV, w, ancestorsW);
-        if(ancestor == -1) return -1;
-        return ancestorsV.distTo(ancestor)+ancestorsW.distTo(ancestor);
+        if (ancestor == -1) return -1;
+        return ancestorsV.distTo(ancestor) + ancestorsW.distTo(ancestor);
 
     }
 
-    private int getFirstCommonAncestor(int v, BreadthFirstDirectedPaths ancestorsV, int w, BreadthFirstDirectedPaths ancestorsW){
+    private int getFirstCommonAncestor(int v, BreadthFirstDirectedPaths ancestorsV, int w, BreadthFirstDirectedPaths ancestorsW) {
         int minPath = Integer.MAX_VALUE;
         int ancestor = -1;
         if (ancestorsV.hasPathTo(w)) {
@@ -45,14 +45,14 @@ public class SAP {
         while (hasParent) {
             dist++;
             final Integer parentV = iterator.next();
-            if(ancestorsW.hasPathTo(parentV)){
+            if (ancestorsW.hasPathTo(parentV)) {
                 final int distToW = ancestorsW.distTo(parentV) + dist;
-                if(distToW < minPath){
-                    minPath =  distToW;
+                if (distToW < minPath) {
+                    minPath = distToW;
                     ancestor = parentV;
                 }
             }
-            if(!iterator.hasNext()){
+            if (!iterator.hasNext()) {
                 iterator = graph.adj(parentV).iterator();
                 hasParent = iterator.hasNext();
             }
@@ -76,13 +76,37 @@ public class SAP {
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null || w == null) throw new IllegalArgumentException("Input can not be null");
-        return 0;
+        BreadthFirstDirectedPaths ancestorsV = new BreadthFirstDirectedPaths(graph, v);
+        BreadthFirstDirectedPaths ancestorsW = new BreadthFirstDirectedPaths(graph, w);
+
+        final int commonAncestor = getFirstCommonAncestor(v, w, ancestorsV, ancestorsW);
+        return commonAncestor == -1 ? -1 : ancestorsV.distTo(commonAncestor) + ancestorsW.distTo(commonAncestor);
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null || w == null) throw new IllegalArgumentException("Input can not be null");
-        return 0;
+        BreadthFirstDirectedPaths ancestorsV = new BreadthFirstDirectedPaths(graph, v);
+        BreadthFirstDirectedPaths ancestorsW = new BreadthFirstDirectedPaths(graph, w);
+
+        return getFirstCommonAncestor(v, w, ancestorsV, ancestorsW);
+    }
+
+    private int getFirstCommonAncestor(Iterable<Integer> v, Iterable<Integer> w, BreadthFirstDirectedPaths ancestorsV, BreadthFirstDirectedPaths ancestorsW) {
+        int ancestor = -1;
+        int minLen = Integer.MAX_VALUE;
+        for (Integer vv : v) {
+            for (Integer ww : w) {
+                final int commonAncestor = getFirstCommonAncestor(vv, ancestorsV, ww, ancestorsW);
+                if (commonAncestor == -1) continue;
+                final int dist = ancestorsV.distTo(commonAncestor) + ancestorsW.distTo(commonAncestor);
+                if (dist < minLen) {
+                    minLen = dist;
+                    ancestor = commonAncestor;
+                }
+            }
+        }
+        return ancestor;
     }
 
     // do unit testing of this class

@@ -2,6 +2,9 @@ import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -103,6 +106,17 @@ public class SAPTest {
         final int w = 5;
         assertEquals(-1, sap.length(v, w));
         assertEquals(-1, sap.ancestor(v, w));
+    }
+
+    //@Test
+    public void sap_digraph_ambiguous_ancestor_10_1_to_5() {
+        Digraph G = new Digraph(new In("wordnet/digraph-ambiguous-ancestor.txt"));
+        SAP sap = new SAP(G);
+        final int v1 = 10;
+        final int v2 = 1;
+        final int w = 5;
+        assertEquals(3, sap.length(Arrays.asList(v1, v2), Collections.singletonList(w)));
+        assertEquals(2, sap.ancestor(Arrays.asList(v1, v2), Collections.singletonList(w)));
     }
 
 }
