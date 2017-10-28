@@ -51,4 +51,58 @@ public class SAPTest {
         assertEquals(-1, sap.ancestor(v, w));
     }
 
+    /*
+    11 vertices, 11 edges
+    0: 10 1
+    1: 2
+    2: 3
+    3:
+    4: 2
+    5: 4
+    6: 7 5
+    7:
+    8: 7
+    9: 8
+    10: 9
+     */
+    @Test
+    public void sap_digraph_ambiguous_ancestor_0_5() {
+        Digraph G = new Digraph(new In("wordnet/digraph-ambiguous-ancestor.txt"));
+        SAP sap = new SAP(G);
+        final int v = 0;
+        final int w = 5;
+        assertEquals(4, sap.length(v, w));
+        assertEquals(2, sap.ancestor(v, w));
+    }
+
+    @Test
+    public void sap_digraph_ambiguous_ancestor_0_7() {
+        Digraph G = new Digraph(new In("wordnet/digraph-ambiguous-ancestor.txt"));
+        SAP sap = new SAP(G);
+        final int v = 0;
+        final int w = 7;
+        assertEquals(4, sap.length(v, w));
+        assertEquals(7, sap.ancestor(v, w));
+    }
+
+    @Test
+    public void sap_digraph_ambiguous_ancestor_1_6() {
+        Digraph G = new Digraph(new In("wordnet/digraph-ambiguous-ancestor.txt"));
+        SAP sap = new SAP(G);
+        final int v = 1;
+        final int w = 6;
+        assertEquals(4, sap.length(v, w));
+        assertEquals(2, sap.ancestor(v, w));
+    }
+
+    @Test
+    public void sap_digraph_ambiguous_ancestor_10_5() {
+        Digraph G = new Digraph(new In("wordnet/digraph-ambiguous-ancestor.txt"));
+        SAP sap = new SAP(G);
+        final int v = 10;
+        final int w = 5;
+        assertEquals(-1, sap.length(v, w));
+        assertEquals(-1, sap.ancestor(v, w));
+    }
+
 }
