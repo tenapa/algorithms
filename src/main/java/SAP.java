@@ -1,7 +1,10 @@
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.Queue;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @author Tetiana_Prynda
@@ -19,7 +22,7 @@ public class SAP {
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
         if (v < 0 || v > graph.V() || w < 0 || w > graph.V())
-            throw new IllegalArgumentException("Input must be withing bounds");
+            throw new IndexOutOfBoundsException("Input must be withing bounds");
 
         BreadthFirstDirectedPaths ancestorsV = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths ancestorsW = new BreadthFirstDirectedPaths(graph, w);
@@ -31,41 +34,70 @@ public class SAP {
     }
 
     private int getFirstCommonAncestor(int v, BreadthFirstDirectedPaths ancestorsV, int w, BreadthFirstDirectedPaths ancestorsW) {
-        int minPath = Integer.MAX_VALUE;
-        int ancestor = -1;
-        if (ancestorsV.hasPathTo(w)) {
-            final int dist = ancestorsV.distTo(w);
-            minPath = dist < minPath ? dist : minPath;
-            ancestor = w;
-        }
+        AncestorNode ancestor = new AncestorNode(-1, Integer.MAX_VALUE);
 
-        Iterator<Integer> iterator = graph.adj(v).iterator();
-        int dist = 0;
-        boolean hasParent = iterator.hasNext();
-        while (hasParent) {
-            dist++;
-            final int parentV = iterator.next();
-            if (ancestorsW.hasPathTo(parentV)) {
-                final int distToW = ancestorsW.distTo(parentV) + dist;
-                if (distToW < minPath) {
-                    minPath = distToW;
-                    ancestor = parentV;
+        ancestor = getAncestorNode(ancestorsV, w, ancestor);
+        ancestor = getAncestorNode(ancestorsW, v, ancestor);
+
+        Queue<AncestorNode> queue = new Queue<>();
+        queue.enqueue(new AncestorNode(v, 0));
+
+        Collection<Integer> used = new ArrayList<>();
+        used.add(v);
+
+        while (!queue.isEmpty()) {
+            AncestorNode c = queue.dequeue();
+            for (int cc : graph.adj(c.getId())) {
+                if (!used.contains(cc)) {
+                    if (ancestorsW.hasPathTo(cc)) {
+                        final int dist = ancestorsW.distTo(cc) + c.getDist();
+                        if (dist < ancestor.getDist()) {
+                            ancestor = new AncestorNode(cc, dist);
+                        }
+                    }
+                    used.add(cc);
+                    queue.enqueue(new AncestorNode(cc, c.getDist() + 1));
                 }
             }
-            if (!iterator.hasNext()) {
-                iterator = graph.adj(parentV).iterator();
-                hasParent = iterator.hasNext();
+        }
+
+        used.clear();
+        queue.enqueue(new AncestorNode(w, 0));
+        while (!queue.isEmpty()) {
+            AncestorNode c = queue.dequeue();
+            for (int cc : graph.adj(c.getId())) {
+                if (!used.contains(cc)) {
+                    if (ancestorsV.hasPathTo(cc)) {
+                        final int dist = ancestorsV.distTo(cc) + c.getDist();
+                        if (dist < ancestor.getDist()) {
+                            ancestor = new AncestorNode(cc, dist);
+                        }
+                    }
+                    used.add(cc);
+                    queue.enqueue(new AncestorNode(cc, c.getDist() + 1));
+                }
             }
         }
 
-        return ancestor;
+        return ancestor.getId();
 
+    }
+
+    private AncestorNode getAncestorNode(BreadthFirstDirectedPaths from, int to, AncestorNode current) {
+        if (from.hasPathTo(to)) {
+            final int dist = from.distTo(to);
+            if (dist < current.getDist()) {
+                return new AncestorNode(to, dist);
+
+            }
+        }
+        return current;
     }
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
         if (v < 0 || v > graph.V() || w < 0 || w > graph.V())
-            throw new IllegalArgumentException("Input must be withing bounds");
+            throw new IndexOutOfBoundsException("Input must be withing bounds");
 
         BreadthFirstDirectedPaths ancestorsV = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths ancestorsW = new BreadthFirstDirectedPaths(graph, w);
@@ -76,6 +108,8 @@ public class SAP {
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null || w == null) throw new IllegalArgumentException("Input can not be null");
+        checkBounds(v);
+        checkBounds(w);
         BreadthFirstDirectedPaths ancestorsV = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths ancestorsW = new BreadthFirstDirectedPaths(graph, w);
 
@@ -83,9 +117,18 @@ public class SAP {
         return commonAncestor == -1 ? -1 : ancestorsV.distTo(commonAncestor) + ancestorsW.distTo(commonAncestor);
     }
 
+    private void checkBounds(Iterable<Integer> values) {
+        for (Integer v : values) {
+            if (v < 0 || v > graph.V())
+                throw new IndexOutOfBoundsException("Input must be withing bounds");
+        }
+    }
+
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null || w == null) throw new IllegalArgumentException("Input can not be null");
+        checkBounds(v);
+        checkBounds(w);
         BreadthFirstDirectedPaths ancestorsV = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths ancestorsW = new BreadthFirstDirectedPaths(graph, w);
 
@@ -112,5 +155,37 @@ public class SAP {
     // do unit testing of this class
     public static void main(String[] args) {
 //        intentionally empty
+    }
+
+    private class AncestorNode {
+        private final int id;
+        private final int dist;
+
+        public AncestorNode(int id, int dist) {
+            this.id = id;
+            this.dist = dist;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public int getDist() {
+            return dist;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            AncestorNode that = (AncestorNode) o;
+            return id == that.id &&
+                    dist == that.dist;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, dist);
+        }
     }
 }
