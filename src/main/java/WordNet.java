@@ -87,7 +87,16 @@ public class WordNet {
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
         if (nounA == null || nounB == null) throw new IllegalArgumentException("Input can not be null");
-        return sap.length(nounToId.get(nounA), nounToId.get(nounB));
+        final Collection<Integer> nounAIds = nounToId.get(nounA);
+        final Collection<Integer> nounBIds = nounToId.get(nounB);
+        checkIds(nounAIds);
+        checkIds(nounBIds);
+        return sap.length(nounAIds, nounBIds);
+    }
+
+    private void checkIds(Collection<Integer> ids) {
+        if (ids == null || ids.isEmpty())
+            throw new IllegalArgumentException("No such elements in dictionary");
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
@@ -95,7 +104,13 @@ public class WordNet {
     public String sap(String nounA, String nounB) {
         if (nounA == null || nounB == null) throw new IllegalArgumentException("Input can not be null");
 
-        final int ancestor = sap.ancestor(nounToId.get(nounA), nounToId.get(nounB));
+        final Collection<Integer> nounAIds = nounToId.get(nounA);
+        final Collection<Integer> nounBIds = nounToId.get(nounB);
+
+        checkIds(nounAIds);
+        checkIds(nounBIds);
+
+        final int ancestor = sap.ancestor(nounAIds, nounBIds);
         return dictionary.get(ancestor).getNouns();
     }
 

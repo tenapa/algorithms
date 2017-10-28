@@ -16,13 +16,13 @@ public class SAP {
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
         if (G == null) throw new IllegalArgumentException("Input can not be null");
-        graph = G;
+        graph = new Digraph(G);
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
-        if (v < 0 || v > graph.V() || w < 0 || w > graph.V())
-            throw new IndexOutOfBoundsException("Input must be withing bounds");
+        checkBounds(v);
+        checkBounds(w);
 
         BreadthFirstDirectedPaths ancestorsV = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths ancestorsW = new BreadthFirstDirectedPaths(graph, w);
@@ -96,8 +96,8 @@ public class SAP {
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-        if (v < 0 || v > graph.V() || w < 0 || w > graph.V())
-            throw new IndexOutOfBoundsException("Input must be withing bounds");
+        checkBounds(v);
+        checkBounds(w);
 
         BreadthFirstDirectedPaths ancestorsV = new BreadthFirstDirectedPaths(graph, v);
         BreadthFirstDirectedPaths ancestorsW = new BreadthFirstDirectedPaths(graph, w);
@@ -106,6 +106,7 @@ public class SAP {
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
+
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null || w == null) throw new IllegalArgumentException("Input can not be null");
         checkBounds(v);
@@ -116,12 +117,15 @@ public class SAP {
         final int commonAncestor = getFirstCommonAncestor(v, w, ancestorsV, ancestorsW);
         return commonAncestor == -1 ? -1 : ancestorsV.distTo(commonAncestor) + ancestorsW.distTo(commonAncestor);
     }
-
     private void checkBounds(Iterable<Integer> values) {
         for (int v : values) {
-            if (v < 0 || v > graph.V())
-                throw new IndexOutOfBoundsException("Input must be withing bounds");
+            checkBounds(v);
         }
+    }
+
+    private void checkBounds(int v) {
+        if (v < 0 || v >= graph.V())
+            throw new IndexOutOfBoundsException("Input must be withing bounds");
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path

@@ -27,13 +27,18 @@ public class WordNetTest {
         assertEquals("b", wordNet.sap("n", "b"));
         assertEquals("a", wordNet.sap("n", "c"));
         assertEquals("f", wordNet.sap("n", "j"));
-        assertEquals("f", wordNet.distance("x", "b"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void wordNew_synsets15_hypernyms15Tree_exception() throws Exception {
         final WordNet wordNet = new WordNet("wordnet/synsets15.txt", "wordnet/hypernyms15Tree.txt");
         wordNet.distance("x", "b");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void wordNew_synsets15_hypernyms15Tree_exception2() throws Exception {
+        final WordNet wordNet = new WordNet("wordnet/synsets15.txt", "wordnet/hypernyms15Tree.txt");
+        wordNet.sap("x", "b");
     }
 
 }

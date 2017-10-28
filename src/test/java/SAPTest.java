@@ -31,6 +31,15 @@ public class SAPTest {
         sap.ancestor(v, w);
     }
 
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void sap_digraph1_IllegV_anc2() {
+        Digraph G = new Digraph(new In("wordnet/digraph1.txt"));
+        SAP sap = new SAP(G);
+        final int v = 13;
+        final int w = 0;
+        sap.ancestor(v, w);
+    }
+
     @Test
     public void sap_digraph1_3_11() {
         Digraph G = new Digraph(new In("wordnet/digraph1.txt"));
