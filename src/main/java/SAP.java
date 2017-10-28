@@ -118,7 +118,7 @@ public class SAP {
     }
 
     private void checkBounds(Iterable<Integer> values) {
-        for (Integer v : values) {
+        for (int v : values) {
             if (v < 0 || v > graph.V())
                 throw new IndexOutOfBoundsException("Input must be withing bounds");
         }
@@ -175,10 +175,10 @@ public class SAP {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            AncestorNode that = (AncestorNode) o;
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            AncestorNode that = (AncestorNode) obj;
             return id == that.id &&
                     dist == that.dist;
         }
