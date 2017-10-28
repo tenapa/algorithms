@@ -44,7 +44,7 @@ public class SAP {
         boolean hasParent = iterator.hasNext();
         while (hasParent) {
             dist++;
-            final Integer parentV = iterator.next();
+            final int parentV = iterator.next();
             if (ancestorsW.hasPathTo(parentV)) {
                 final int distToW = ancestorsW.distTo(parentV) + dist;
                 if (distToW < minPath) {
@@ -95,8 +95,8 @@ public class SAP {
     private int getFirstCommonAncestor(Iterable<Integer> v, Iterable<Integer> w, BreadthFirstDirectedPaths ancestorsV, BreadthFirstDirectedPaths ancestorsW) {
         int ancestor = -1;
         int minLen = Integer.MAX_VALUE;
-        for (Integer vv : v) {
-            for (Integer ww : w) {
+        for (int vv : v) {
+            for (int ww : w) {
                 final int commonAncestor = getFirstCommonAncestor(vv, ancestorsV, ww, ancestorsW);
                 if (commonAncestor == -1) continue;
                 final int dist = ancestorsV.distTo(commonAncestor) + ancestorsW.distTo(commonAncestor);
@@ -111,6 +111,6 @@ public class SAP {
 
     // do unit testing of this class
     public static void main(String[] args) {
-
+//        intentionally empty
     }
 }
