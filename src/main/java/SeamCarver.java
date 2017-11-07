@@ -235,6 +235,10 @@ public class SeamCarver {
     private void checkSeam(int[] seam, boolean isVertical) {
         if (seam.length != (isVertical ? height : width))
             throw new IllegalArgumentException("Not a valid seam");
+        if((isVertical && width == 1 )|| (!isVertical && height == 1)){
+            throw new IllegalArgumentException("Can not remove seam. Image will be empty");
+        }
+
         int previous = seam[0];
 
         if (isVertical) checkIndex(previous, 0);

@@ -107,6 +107,13 @@ public class SeamCarverTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void hor_seam_8x1() throws Exception {
+        SeamCarver carver = new SeamCarver(new Picture("/seam/8x1.png"));
+        int[] horizontalSeam = carver.findHorizontalSeam();
+        carver.removeVerticalSeam(horizontalSeam);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void vert_seam_3x7() throws Exception {
         SeamCarver carver = new SeamCarver(new Picture("/seam/3x7.png"));
         int[] verticalSeam = new int[]{ -1, 0, 0, 0, 0, 0, 0};
