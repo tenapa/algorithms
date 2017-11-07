@@ -261,11 +261,11 @@ public class SeamCarver {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
 
-            Coord coord = (Coord) o;
+            Coord coord = (Coord) obj;
 
             if (x != coord.x) return false;
             return y == coord.y;
@@ -306,11 +306,11 @@ public class SeamCarver {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
 
-            BestSeam bestSeam = (BestSeam) o;
+            BestSeam bestSeam = (BestSeam) obj;
 
             if (Double.compare(bestSeam.energy, energy) != 0) return false;
             return Arrays.equals(seam, bestSeam.seam);
