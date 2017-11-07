@@ -236,9 +236,18 @@ public class SeamCarver {
         if (seam.length != (isVertical ? height : width))
             throw new IllegalArgumentException("Not a valid seam");
         int previous = seam[0];
+
+        if (isVertical) checkIndex(previous, 0);
+        else checkIndex(0, previous);
+
         for (int i = 1; i < seam.length; i++) {
             if (Math.abs(previous - seam[i]) > 1)
                 throw new IllegalArgumentException("Not a valid seam");
+
+            if (isVertical) checkIndex(seam[i], 0);
+            else checkIndex(0, seam[i]);
+
+            previous = seam[i];
 
         }
     }
