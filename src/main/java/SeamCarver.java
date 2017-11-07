@@ -21,8 +21,8 @@ public class SeamCarver {
         this.width = pic.width();
         energies = new double[width][height];
         picture = new Color[width][height];
-        for (int i = 0; i < width(); i++) {
-            for (int j = 0; j < height(); j++) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
                 if (i == 0 || j == 0 || i == width - 1 || j == height - 1) {
                     energies[i][j] = 1000;
                 } else {
@@ -30,7 +30,7 @@ public class SeamCarver {
                     Color colorR = pic.get(i + 1, j);
                     Color colorU = pic.get(i, j - 1);
                     Color colorD = pic.get(i, j + 1);
-                    energies[i][i] = getEnergy(colorL, colorR, colorU, colorD);
+                    energies[i][j] = getEnergy(colorL, colorR, colorU, colorD);
                 }
                 picture[i][j] = pic.get(i, j);
             }

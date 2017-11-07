@@ -31,6 +31,12 @@ public class SeamCarverTest {
     }
 
     @Test
+    public void energy_7x3_1_1() throws Exception {
+        SeamCarver carver = new SeamCarver(new Picture("/seam/7x3.png"));
+        assertEquals(237.12, carver.energy(1, 1), 0.01);
+    }
+
+    @Test
     public void vert_seam_3x4() throws Exception {
         SeamCarver carver = new SeamCarver(new Picture("/seam/3x4.png"));
         Picture originalPicture = carver.picture();
