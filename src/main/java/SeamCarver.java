@@ -60,7 +60,7 @@ public class SeamCarver {
 
     // energy of pixel at column x and row y
     public double energy(int x, int y) {
-        checkIndex(x, y);
+        checkIndex(x, y, "Energy calculation.");
         if (x == 0 || y == 0 || x == width() - 1 || y == height() - 1)
             return 1000;
         Color colorL = picture[x - 1][y];
@@ -130,7 +130,9 @@ public class SeamCarver {
             if (y < height - 1) {
                 energies[x][y + 1] = energy(x, y + 1);
             }
-            energies[x][y] = energy(x, y);
+            if (y != height) {
+                energies[x][y] = energy(x, y);
+            }
         }
 
     }
@@ -153,7 +155,9 @@ public class SeamCarver {
             if (x < width - 1) {
                 energies[x + 1][y] = energy(x + 1, y);
             }
-            energies[x][y] = energy(x, y);
+            if (x != width) {
+                energies[x][y] = energy(x, y);
+            }
         }
 
     }
@@ -227,29 +231,29 @@ public class SeamCarver {
         if (object == null) throw new IllegalArgumentException("Argument can not be null");
     }
 
-    private void checkIndex(int x, int y) {
+    private void checkIndex(int x, int y, String message) {
         if (x < 0 || x > width - 1 || y < 0 || y > height - 1)
-            throw new IllegalArgumentException("Indexes must be within bounds");
+            throw new IllegalArgumentException("Indexes must be within bounds: x=" + x + "(" + width + ")" + "y=" + y + "(" + height + "). " + message);
     }
 
     private void checkSeam(int[] seam, boolean isVertical) {
         if (seam.length != (isVertical ? height : width))
             throw new IllegalArgumentException("Not a valid seam");
-        if((isVertical && width == 1 )|| (!isVertical && height == 1)){
+        if ((isVertical && width == 1) || (!isVertical && height == 1)) {
             throw new IllegalArgumentException("Can not remove seam. Image will be empty");
         }
 
         int previous = seam[0];
 
-        if (isVertical) checkIndex(previous, 0);
-        else checkIndex(0, previous);
+        if (isVertical) checkIndex(previous, 0, "Seam " + Arrays.toString(seam));
+        else checkIndex(0, previous, "Seam " + Arrays.toString(seam));
 
         for (int i = 1; i < seam.length; i++) {
             if (Math.abs(previous - seam[i]) > 1)
                 throw new IllegalArgumentException("Not a valid seam");
 
-            if (isVertical) checkIndex(seam[i], 0);
-            else checkIndex(0, seam[i]);
+            if (isVertical) checkIndex(seam[i], i, "Seam " + Arrays.toString(seam));
+            else checkIndex(i, seam[i], "Seam " + Arrays.toString(seam));
 
             previous = seam[i];
 

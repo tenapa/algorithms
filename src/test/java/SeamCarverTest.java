@@ -55,6 +55,23 @@ public class SeamCarverTest {
     }
 
     @Test
+    public void vert_seam_3x4_random() throws Exception {
+        SeamCarver carver = new SeamCarver(new Picture("/seam/3x4.png"));
+        Picture originalPicture = carver.picture();
+        int[] verticalSeam = new int[]{0, 1, 2, 2};
+        carver.removeVerticalSeam(verticalSeam);
+        Picture updatedPicture = carver.picture();
+        assertEquals(originalPicture.get(1, 0), updatedPicture.get(0, 0));
+        assertEquals(originalPicture.get(2, 0), updatedPicture.get(1, 0));
+        assertEquals(originalPicture.get(0, 1), updatedPicture.get(0, 1));
+        assertEquals(originalPicture.get(2, 1), updatedPicture.get(1, 1));
+        assertEquals(originalPicture.get(0, 2), updatedPicture.get(0, 2));
+        assertEquals(originalPicture.get(1, 2), updatedPicture.get(1, 2));
+        assertEquals(originalPicture.get(0, 3), updatedPicture.get(0, 3));
+        assertEquals(originalPicture.get(1, 3), updatedPicture.get(1, 3));
+    }
+
+    @Test
     public void hor_seam_3x4() throws Exception {
         SeamCarver carver = new SeamCarver(new Picture("/seam/3x4.png"));
         Picture originalPicture = carver.picture();
@@ -71,6 +88,24 @@ public class SeamCarverTest {
         assertEquals(originalPicture.get(0, 3), updatedPicture.get(0, 2));
         assertEquals(originalPicture.get(1, 3), updatedPicture.get(1, 2));
         assertEquals(originalPicture.get(2, 3), updatedPicture.get(2, 2));
+    }
+
+    @Test
+    public void hor_seam_3x4_random() throws Exception {
+        SeamCarver carver = new SeamCarver(new Picture("/seam/3x4.png"));
+        Picture originalPicture = carver.picture();
+        int[] horizontalSeam = new int[]{1, 2, 3};
+        carver.removeHorizontalSeam(horizontalSeam);
+        Picture updatedPicture = carver.picture();
+        assertEquals(originalPicture.get(0, 0), updatedPicture.get(0, 0));
+        assertEquals(originalPicture.get(1, 0), updatedPicture.get(1, 0));
+        assertEquals(originalPicture.get(2, 0), updatedPicture.get(2, 0));
+        assertEquals(originalPicture.get(0, 2), updatedPicture.get(0, 1));
+        assertEquals(originalPicture.get(1, 1), updatedPicture.get(1, 1));
+        assertEquals(originalPicture.get(2, 1), updatedPicture.get(2, 1));
+        assertEquals(originalPicture.get(0, 3), updatedPicture.get(0, 2));
+        assertEquals(originalPicture.get(1, 3), updatedPicture.get(1, 2));
+        assertEquals(originalPicture.get(2, 2), updatedPicture.get(2, 2));
     }
 
     @Test
@@ -116,7 +151,7 @@ public class SeamCarverTest {
     @Test(expected = IllegalArgumentException.class)
     public void vert_seam_3x7() throws Exception {
         SeamCarver carver = new SeamCarver(new Picture("/seam/3x7.png"));
-        int[] verticalSeam = new int[]{ -1, 0, 0, 0, 0, 0, 0};
+        int[] verticalSeam = new int[]{-1, 0, 0, 0, 0, 0, 0};
         carver.removeVerticalSeam(verticalSeam);
     }
 
